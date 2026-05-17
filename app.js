@@ -69,18 +69,37 @@ async function loadContent() {
     return mergeContent(await response.json());
   } catch {
     apiAvailable = false;
-    const storedContent = localStorage.getItem(storageKey);
-
-    if (!storedContent) {
-      return structuredClone(defaultContent);
-    }
-
-    try {
-      return mergeContent(JSON.parse(storedContent));
-    } catch {
-      return structuredClone(defaultContent);
-    }
   }
+
+  try {
+    const response = await fetch("/data/profile.json", { cache: "no-store" });
+
+    if (response.ok) {
+      return mergeContent(await response.json());
+    }
+  } catch {
+    apiAvailable = false;
+  }
+
+  const storedContent = localStorage.getItem(storageKey);
+
+  if (!storedContent) {
+    return structuredClone(defaultContent);
+  }
+
+  try {
+    return mergeContent(JSON.parse(storedContent));
+  } catch {
+    return structuredClone(defaultContent);
+  }
+}
+
+function showStaticSaveNotice() {
+  if (apiAvailable) {
+    return;
+  }
+
+  alert("免费静态模式下，修改只会保存在当前浏览器。要让所有人看到最新内容，请更新 data/profile.json 和照片文件后重新部署。");
 }
 
 function renderContent() {
@@ -170,6 +189,7 @@ async function saveContent() {
     }
   } else {
     localStorage.setItem(storageKey, JSON.stringify(content));
+    showStaticSaveNotice();
   }
 }
 

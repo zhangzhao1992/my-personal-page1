@@ -1,18 +1,6 @@
 services:
   - type: web
     name: personal-profile-site
-    runtime: node
-    plan: starter
+    runtime: static
     buildCommand: ""
-    startCommand: npm start
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: DATA_DIR
-        value: /var/data/data
-      - key: ASSETS_DIR
-        value: /var/data/assets
-    disk:
-      name: personal-profile-site-data
-      mountPath: /var/data
-      sizeGB: 1
+    staticPublishPath: .

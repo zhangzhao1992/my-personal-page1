@@ -1,20 +1,40 @@
 # 个人主页网站
 
-## 发布到互联网
+## 免费发布到互联网
 
-这个项目已经可以部署到支持 Node.js 和持久磁盘的平台，例如 Render。
+这个项目现在按免费静态站点配置，可以部署到 Render Static Site、GitHub Pages、Netlify 或 Vercel。
 
 ### Render 部署步骤
 
 1. 把这个文件夹上传到 GitHub 仓库。
-2. 打开 Render，新建 `Blueprint`。
+2. 打开 Render，新建 `Blueprint`，或者新建 `Static Site`。
 3. 选择你的 GitHub 仓库。
-4. Render 会读取 `render.yaml`，创建网站服务和 1GB 持久存储。
+4. Render 会读取 `render.yaml`，创建免费静态站点。
 5. 部署完成后，Render 会给你一个 `https://...onrender.com` 的公网网址。
 
-公网网址打开后，点击“编辑内容”保存的资料会写入持久存储；上传照片也会保存并展示给所有访问者。
+公网网址打开后，所有人都会看到 `data/profile.json` 里的公开资料。
 
-注意：`render.yaml` 使用了持久磁盘配置，Render 可能要求选择支持磁盘的付费实例。如果你想完全免费发布，只能做静态展示，网页在线编辑和保存照片就需要换成数据库或第三方存储。
+注意：免费静态站点没有服务器存储。网页里的“编辑内容”和“上传照片”只能保存在当前浏览器，用来预览。要让所有人看到最新内容，需要更新 `data/profile.json` 和照片文件后重新部署。
+
+## 更新公开内容
+
+公开文字内容在：
+
+```text
+data/profile.json
+```
+
+公开照片可以放在：
+
+```text
+assets/profile-photo.jpg
+```
+
+然后把 `data/profile.json` 里的 `photoUrl` 改成：
+
+```json
+"/assets/profile-photo.jpg"
+```
 
 ## 本机打开
 
