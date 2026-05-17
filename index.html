@@ -4,125 +4,136 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="Cache-Control" content="no-store" />
-    <title>个人主页</title>
+    <title>无锡猫庐文化有限公司</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="#top" aria-label="返回顶部">个人主页</a>
+      <a class="brand" href="#top" data-field="name">无锡猫庐文化有限公司</a>
       <nav aria-label="页面导航">
-        <a href="#profile">基本信息</a>
-        <a href="#experience">工作经历</a>
-        <a href="#contact">联系方式</a>
+        <a href="#services">业务能力</a>
+        <a href="#about">关于猫庐</a>
+        <a href="#experience">项目方向</a>
+        <a href="#contact">联系合作</a>
       </nav>
-      <button class="ghost-button" id="editToggle" type="button">编辑内容</button>
+      <a class="nav-cta" href="#contact">洽谈项目</a>
     </header>
 
-    <main id="top">
-      <section class="hero section-band">
+    <main id="top" class="site-main" hidden>
+      <section class="hero">
         <div class="hero-copy">
-          <p class="eyebrow editable" data-field="tagline" contenteditable="false">专注于产品、技术与持续成长</p>
-          <h1 class="editable" data-field="name" contenteditable="false">你的姓名</h1>
-          <p class="subtitle editable" data-field="headline" contenteditable="false">
-            在这里写一句清晰、有力量的个人介绍，例如你的职业方向、擅长领域或正在寻找的机会。
+          <p class="eyebrow" data-field="tagline">十五年匠心沉淀，用数字艺术赋能每一个硬核创意。</p>
+          <h1 data-field="name">无锡猫庐文化有限公司</h1>
+          <p class="subtitle" data-field="headline">
+            深耕动漫与游戏动画制作15年，以顶尖的CG视听语言，为全球客户打造直击心灵的数字内容。
           </p>
-          <div class="action-row">
-            <a class="primary-button" href="#experience">查看经历</a>
-            <label class="upload-button" for="photoInput">上传照片</label>
-            <button class="ghost-button" id="exportButton" type="button">下载发布资料</button>
-            <input id="photoInput" type="file" accept="image/*" />
+          <div class="hero-actions">
+            <a class="primary-button" href="#services">了解服务</a>
+            <a class="secondary-button" href="#contact">获取报价</a>
           </div>
         </div>
 
-        <figure class="portrait-frame">
-          <img id="portrait" alt="个人照片" />
-          <figcaption id="photoHint">上传一张照片后，这里会显示最新照片</figcaption>
-        </figure>
-      </section>
-
-      <section class="content-grid section-band" id="profile">
-        <div class="section-heading">
-          <p class="eyebrow">Profile</p>
-          <h2>个人基本信息</h2>
-        </div>
-        <div class="info-list" id="profileFields">
-          <div class="info-item">
-            <span>所在城市</span>
-            <strong class="editable" data-field="city" contenteditable="false">中国 · 城市</strong>
+        <div class="showreel-panel" aria-label="公司核心数据">
+          <div class="showreel-visual">
+            <span>CG</span>
+            <span>Animation</span>
           </div>
-          <div class="info-item">
-            <span>当前职位</span>
-            <strong class="editable" data-field="role" contenteditable="false">你的职位</strong>
-          </div>
-          <div class="info-item">
-            <span>专业方向</span>
-            <strong class="editable" data-field="focus" contenteditable="false">产品设计 / 前端开发 / 项目管理</strong>
-          </div>
-          <div class="info-item">
-            <span>工作年限</span>
-            <strong class="editable" data-field="years" contenteditable="false">3 年+</strong>
+          <div class="metric-row">
+            <div>
+              <strong data-field="years">15 年+</strong>
+              <span>行业沉淀</span>
+            </div>
+            <div>
+              <strong>全流程</strong>
+              <span>动画制作交付</span>
+            </div>
           </div>
         </div>
       </section>
 
-      <section class="section-band about-section">
+      <section class="section-band service-section" id="services">
         <div class="section-heading">
-          <p class="eyebrow">About</p>
-          <h2>关于我</h2>
+          <p class="eyebrow">Services</p>
+          <h2>为动画与游戏项目提供高品质 CG 内容</h2>
         </div>
-        <p class="about-text editable" data-field="about" contenteditable="false">
-          这里可以写你的个人简介。建议包含你的工作方式、关键能力、代表成果，以及你希望别人通过这个网站快速了解的重点。
-        </p>
+        <div class="service-grid">
+          <article>
+            <span>01</span>
+            <h3>动漫影视全流程制作</h3>
+            <p>覆盖剧本分镜、角色概念、三维建模、绑定动画、特效后期，适配番剧、网络动画电影与原创IP包装。</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>游戏高精度 CG 宣传片</h3>
+            <p>以电影化镜头、节奏剪辑与角色表演，强化游戏世界观、核心卖点与上线传播声量。</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>角色技能与剧情动画</h3>
+            <p>定制开场CG、角色动作、大招技能、实时渲染剧情动画，匹配二次元、写实、科幻、国风等风格。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-band profile-grid" id="about">
+        <div class="section-heading">
+          <p class="eyebrow">About Maolu</p>
+          <h2>严谨交付与前沿 CG 技术并重</h2>
+        </div>
+        <div class="profile-content">
+          <p class="about-text" data-field="about">
+            无锡猫庐文化有限公司成立于2011年，是一家集高端动漫动画制作与次世代游戏动画内容开发于一体的创新型数字艺术企业。
+          </p>
+          <div class="info-list">
+            <div class="info-item">
+              <span>所在城市</span>
+              <strong data-field="city">中国 • 无锡</strong>
+            </div>
+            <div class="info-item">
+              <span>项目角色</span>
+              <strong data-field="role">项目负责人 / 创始人</strong>
+            </div>
+            <div class="info-item">
+              <span>核心方向</span>
+              <strong data-field="focus">动漫动画制作 / 游戏动画定制 / 全流程项目交付</strong>
+            </div>
+            <div class="info-item">
+              <span>经验年限</span>
+              <strong data-field="years">15 年+</strong>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section class="section-band" id="experience">
-        <div class="section-title-row">
-          <div class="section-heading">
-            <p class="eyebrow">Experience</p>
-            <h2>工作经历</h2>
-          </div>
-          <button class="ghost-button edit-only" id="addExperience" type="button">添加经历</button>
+        <div class="section-heading wide-heading">
+          <p class="eyebrow">Project Fields</p>
+          <h2>从视觉爆点到完整叙事，为项目建立更强记忆点</h2>
         </div>
         <div class="timeline" id="experienceList"></div>
       </section>
 
-      <section class="content-grid section-band" id="contact">
-        <div class="section-heading">
+      <section class="section-band contact-section" id="contact">
+        <div>
           <p class="eyebrow">Contact</p>
-          <h2>联系方式</h2>
+          <h2>让下一个角色、世界观或宣传片更有冲击力</h2>
         </div>
-        <div class="info-list">
-          <div class="info-item">
-            <span>邮箱</span>
-            <strong class="editable" data-field="email" contenteditable="false">name@example.com</strong>
-          </div>
-          <div class="info-item">
-            <span>电话</span>
-            <strong class="editable" data-field="phone" contenteditable="false">+86 000 0000 0000</strong>
-          </div>
-          <div class="info-item">
-            <span>个人链接</span>
-            <strong class="editable" data-field="website" contenteditable="false">https://example.com</strong>
-          </div>
+        <div class="contact-card">
+          <a data-field="email" href="mailto:chenyu@maoluculture.com">chenyu@maoluculture.com</a>
+          <a data-field="phone" href="tel:+8618260489983">+86 182 6048 9983</a>
+          <a data-field="website" href="https://www.maoluanimation.com">https://www.maoluanimation.com</a>
         </div>
       </section>
     </main>
 
-    <div class="edit-bar" id="editBar" aria-live="polite">
-      <span>编辑模式已开启</span>
-      <button class="primary-button" id="saveButton" type="button">保存更改</button>
-      <button class="ghost-button" id="resetButton" type="button">恢复默认</button>
-    </div>
-
     <template id="experienceTemplate">
       <article class="experience-item">
+        <p class="period" data-exp-field="period"></p>
         <div>
-          <p class="period editable" data-exp-field="period" contenteditable="false"></p>
-          <h3 class="editable" data-exp-field="title" contenteditable="false"></h3>
-          <p class="company editable" data-exp-field="company" contenteditable="false"></p>
+          <h3 data-exp-field="title"></h3>
+          <p class="company" data-exp-field="company"></p>
         </div>
-        <p class="description editable" data-exp-field="description" contenteditable="false"></p>
-        <button class="delete-button edit-only" type="button">删除</button>
+        <p class="description" data-exp-field="description"></p>
       </article>
     </template>
 

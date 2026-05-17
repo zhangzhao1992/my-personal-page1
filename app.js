@@ -1,255 +1,101 @@
-const storageKey = "personal-site-content-v2";
-const photoKey = "personal-site-photo-v2";
-
 const defaultContent = {
-  tagline: "专注于产品、技术与持续成长",
-  name: "你的姓名",
-  headline: "在这里写一句清晰、有力量的个人介绍，例如你的职业方向、擅长领域或正在寻找的机会。",
-  city: "中国 · 城市",
-  role: "你的职位",
-  focus: "产品设计 / 前端开发 / 项目管理",
-  years: "3 年+",
-  about: "这里可以写你的个人简介。建议包含你的工作方式、关键能力、代表成果，以及你希望别人通过这个网站快速了解的重点。",
-  email: "name@example.com",
-  phone: "+86 000 0000 0000",
-  website: "https://example.com",
-  photoUrl: "",
+  tagline: "十五年匠心沉淀，用数字艺术赋能每一个硬核创意。",
+  name: "无锡猫庐文化有限公司",
+  headline: "深耕动漫与游戏动画制作15年，以顶尖的CG视听语言，为全球客户打造直击心灵的数字内容。",
+  city: "中国 • 无锡",
+  role: "项目负责人 / 创始人",
+  focus: "动漫动画制作 / 游戏动画定制 / 全流程项目交付",
+  years: "15 年+",
+  about:
+    "无锡猫庐文化有限公司成立于2011年，是一家集高端动漫动画制作与次世代游戏动画内容开发于一体的创新型数字艺术企业。15年来，我们凭借严谨的项目管理体系与对前沿CG技术的敏锐洞察，主营业务涵盖全流程动漫影视制作、游戏高精度CG宣传片、角色技能与剧情动画等，成功助力海内外众多知名IP与现象级游戏实现视觉蜕变。",
+  email: "chenyu@maoluculture.com",
+  phone: "+86 182 6048 9983",
+  website: "https://www.maoluanimation.com",
   experiences: [
     {
-      period: "2022 - 至今",
-      title: "高级职位名称",
-      company: "公司名称",
-      description: "描述你在这段经历中的职责、关键项目、协作范围和可量化成果。",
+      period: "2011 - 至今",
+      title: "次世代游戏动画内容定制",
+      company: "无锡猫庐文化有限公司",
+      description:
+        "专注于为中大型游戏厂商提供全方位的动画解决方案。包含游戏开场CG、角色高精度动作设计、大招技能特效以及实时渲染剧情动画。精准匹配二次元、欧美写实、科幻、国风等多种美术风格，有效提升游戏产品的视觉张力与商业转化。",
     },
     {
-      period: "2019 - 2022",
-      title: "职位名称",
-      company: "公司名称",
-      description: "写下你负责过的业务、使用过的方法，以及这段经历带来的代表性成长。",
+      period: "2015 - 至今",
+      title: "精品动漫影视与原创IP包装",
+      company: "无锡猫庐文化有限公司",
+      description:
+        "提供从剧本分镜、角色概念设计、三维建模、骨骼绑定到特效后期的全流程动漫影视制作。参与过多部知名番剧与网络动画电影的制作，以院线级的画面质感与细腻的动画表演，赋予每一个故事真正的生命力。",
     },
   ],
 };
 
-const editableFields = document.querySelectorAll("[data-field]");
-const editToggle = document.querySelector("#editToggle");
-const editBar = document.querySelector("#editBar");
-const saveButton = document.querySelector("#saveButton");
-const exportButton = document.querySelector("#exportButton");
-const resetButton = document.querySelector("#resetButton");
-const photoInput = document.querySelector("#photoInput");
-const portrait = document.querySelector("#portrait");
-const portraitFrame = document.querySelector(".portrait-frame");
-const photoHint = document.querySelector("#photoHint");
-const addExperience = document.querySelector("#addExperience");
+const main = document.querySelector(".site-main");
 const experienceList = document.querySelector("#experienceList");
 const experienceTemplate = document.querySelector("#experienceTemplate");
 
-let content = structuredClone(defaultContent);
-let isEditing = false;
-
-function mergeContent(nextContent = {}) {
+function mergeContent(content = {}) {
   return {
-    ...structuredClone(defaultContent),
-    ...nextContent,
-    experiences: Array.isArray(nextContent.experiences)
-      ? nextContent.experiences
-      : structuredClone(defaultContent.experiences),
+    ...defaultContent,
+    ...content,
+    experiences: Array.isArray(content.experiences) ? content.experiences : defaultContent.experiences,
   };
 }
 
 async function loadContent() {
-  const publishedContent = await loadPublishedProfile();
-
-  if (publishedContent) {
-    return publishedContent;
-  }
-
-  const localContent = localStorage.getItem(storageKey);
-
-  if (!localContent) {
-    return structuredClone(defaultContent);
-  }
-
   try {
-    return mergeContent(JSON.parse(localContent));
-  } catch {
-    return structuredClone(defaultContent);
-  }
-}
+    const response = await fetch(`./profile.json?v=${Date.now()}`, { cache: "no-store" });
 
-async function loadPublishedProfile() {
-  const version = Date.now();
-  const paths = [`./profile.json?v=${version}`, `./data/profile.json?v=${version}`];
-
-  for (const path of paths) {
-    try {
-      const response = await fetch(path, { cache: "no-store" });
-
-      if (response.ok) {
-        return mergeContent(await response.json());
-      }
-    } catch {
-      // Keep trying the next possible static profile location.
+    if (response.ok) {
+      return mergeContent(await response.json());
     }
+  } catch {
+    return defaultContent;
   }
 
-  return null;
+  return defaultContent;
 }
 
-function renderContent() {
-  editableFields.forEach((field) => {
-    field.textContent = content[field.dataset.field] || "";
+function setText(selector, value) {
+  document.querySelectorAll(selector).forEach((element) => {
+    element.textContent = value || "";
   });
-
-  renderExperiences();
-  renderPhoto();
 }
 
-function renderExperiences() {
+function setLink(selector, value, prefix = "") {
+  document.querySelectorAll(selector).forEach((element) => {
+    element.textContent = value || "";
+    element.href = value ? `${prefix}${value.replace(/\s/g, "")}` : "#contact";
+  });
+}
+
+function renderExperience(experiences) {
   experienceList.innerHTML = "";
 
-  content.experiences.forEach((experience, index) => {
+  experiences.forEach((experience) => {
     const item = experienceTemplate.content.firstElementChild.cloneNode(true);
 
-    item.dataset.index = String(index);
     item.querySelectorAll("[data-exp-field]").forEach((field) => {
       field.textContent = experience[field.dataset.expField] || "";
-      field.contentEditable = String(isEditing);
-    });
-
-    item.querySelector(".delete-button").addEventListener("click", () => {
-      content.experiences.splice(index, 1);
-      renderExperiences();
-      savePreviewContent();
     });
 
     experienceList.append(item);
   });
 }
 
-function renderPhoto() {
-  const previewPhoto = localStorage.getItem(photoKey);
-  const photo = content.photoUrl || previewPhoto;
+function renderContent(content) {
+  document.querySelectorAll("[data-field]").forEach((field) => {
+    const key = field.dataset.field;
 
-  if (photo) {
-    portrait.src = photo;
-    portraitFrame.classList.add("has-photo");
-    photoHint.textContent = "当前显示的是最新照片";
-  } else {
-    portrait.removeAttribute("src");
-    portraitFrame.classList.remove("has-photo");
-    photoHint.textContent = "上传一张照片后，这里会显示照片";
-  }
-}
-
-function setEditing(nextValue) {
-  isEditing = nextValue;
-  document.body.classList.toggle("editing", isEditing);
-  editToggle.textContent = isEditing ? "退出编辑" : "编辑内容";
-  editBar.hidden = !isEditing;
-
-  document.querySelectorAll(".editable").forEach((field) => {
-    field.contentEditable = String(isEditing);
-  });
-}
-
-function collectContent() {
-  editableFields.forEach((field) => {
-    content[field.dataset.field] = field.textContent.trim();
+    if (key !== "email" && key !== "phone" && key !== "website") {
+      field.textContent = content[key] || "";
+    }
   });
 
-  content.experiences = [...experienceList.querySelectorAll(".experience-item")].map((item) => {
-    const experience = {};
-
-    item.querySelectorAll("[data-exp-field]").forEach((field) => {
-      experience[field.dataset.expField] = field.textContent.trim();
-    });
-
-    return experience;
-  });
+  setLink('[data-field="email"]', content.email, "mailto:");
+  setLink('[data-field="phone"]', content.phone, "tel:");
+  setLink('[data-field="website"]', content.website);
+  renderExperience(content.experiences);
+  main.hidden = false;
 }
 
-function savePreviewContent() {
-  collectContent();
-  localStorage.setItem(storageKey, JSON.stringify(content));
-}
-
-function exportPublicProfile() {
-  collectContent();
-
-  const previewPhoto = localStorage.getItem(photoKey);
-  const publicContent = {
-    ...content,
-    photoUrl: content.photoUrl || previewPhoto || "",
-  };
-  const blob = new Blob([`${JSON.stringify(publicContent, null, 2)}\n`], {
-    type: "application/json;charset=utf-8",
-  });
-  const link = document.createElement("a");
-
-  link.href = URL.createObjectURL(blob);
-  link.download = "profile.json";
-  link.click();
-  URL.revokeObjectURL(link.href);
-}
-
-function showStaticNotice() {
-  alert("已保存到当前浏览器用于预览。要让公网网站更新，请点击“下载发布资料”，把下载的 profile.json 上传到 GitHub 根目录，然后在 Render 重新部署。");
-}
-
-function addNewExperience() {
-  collectContent();
-  content.experiences.push({
-    period: "年份 - 年份",
-    title: "新的职位",
-    company: "公司名称",
-    description: "在这里补充这段工作经历的主要职责和成果。",
-  });
-  renderExperiences();
-  savePreviewContent();
-}
-
-function handlePhotoUpload(event) {
-  const file = event.target.files?.[0];
-
-  if (!file || !file.type.startsWith("image/")) {
-    return;
-  }
-
-  const reader = new FileReader();
-
-  reader.addEventListener("load", () => {
-    localStorage.setItem(photoKey, String(reader.result));
-    content.photoUrl = String(reader.result);
-    renderPhoto();
-    savePreviewContent();
-  });
-
-  reader.readAsDataURL(file);
-}
-
-function resetContent() {
-  content = structuredClone(defaultContent);
-  localStorage.removeItem(storageKey);
-  localStorage.removeItem(photoKey);
-  renderContent();
-  setEditing(false);
-}
-
-editToggle.addEventListener("click", () => setEditing(!isEditing));
-
-saveButton.addEventListener("click", () => {
-  savePreviewContent();
-  setEditing(false);
-  showStaticNotice();
-});
-
-exportButton.addEventListener("click", exportPublicProfile);
-resetButton.addEventListener("click", resetContent);
-photoInput.addEventListener("change", handlePhotoUpload);
-addExperience.addEventListener("click", addNewExperience);
-
-loadContent().then((loadedContent) => {
-  content = loadedContent;
-  renderContent();
-});
+loadContent().then(renderContent);
