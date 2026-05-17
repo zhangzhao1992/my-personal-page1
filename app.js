@@ -34,6 +34,7 @@ const editableFields = document.querySelectorAll("[data-field]");
 const editToggle = document.querySelector("#editToggle");
 const editBar = document.querySelector("#editBar");
 const saveButton = document.querySelector("#saveButton");
+const exportButton = document.querySelector("#exportButton");
 const resetButton = document.querySelector("#resetButton");
 const photoInput = document.querySelector("#photoInput");
 const portrait = document.querySelector("#portrait");
@@ -71,14 +72,18 @@ async function loadContent() {
     apiAvailable = false;
   }
 
-  try {
-    const response = await fetch("/data/profile.json", { cache: "no-store" });
+  const staticProfilePaths = ["/data/profile.json", "/profile.json"];
 
-    if (response.ok) {
-      return mergeContent(await response.json());
+  for (const profilePath of staticProfilePaths) {
+    try {
+      const response = await fetch(profilePath, { cache: "no-store" });
+
+      if (response.ok) {
+        return mergeContent(await response.json());
+      }
+    } catch {
+      apiAvailable = false;
     }
-  } catch {
-    apiAvailable = false;
   }
 
   const storedContent = localStorage.getItem(storageKey);
@@ -99,7 +104,26 @@ function showStaticSaveNotice() {
     return;
   }
 
-  alert("免费静态模式下，修改只会保存在当前浏览器。要让所有人看到最新内容，请更新 data/profile.json 和照片文件后重新部署。");
+  alert("免费静态模式下，修改只会保存在当前浏览器。要让所有人看到最新内容，请更新 GitHub 里的 profile.json，然后重新部署。");
+}
+
+function exportPublicProfile() {
+  collectContent();
+
+  const fallbackPhoto = localStorage.getItem(photoKey);
+  const publicContent = {
+    ...content,
+    photoUrl: content.photoUrl || fallbackPhoto || "",
+  };
+  const blob = new Blob([`${JSON.stringify(publicContent, null, 2)}\n`], {
+    type: "application/json;charset=utf-8",
+  });
+  const link = document.createElement("a");
+
+  link.href = URL.createObjectURL(blob);
+  link.download = "profile.json";
+  link.click();
+  URL.revokeObjectURL(link.href);
 }
 
 function renderContent() {
@@ -267,6 +291,7 @@ saveButton.addEventListener("click", async () => {
   setEditing(false);
 });
 
+exportButton.addEventListener("click", exportPublicProfile);
 resetButton.addEventListener("click", resetContent);
 photoInput.addEventListener("change", handlePhotoUpload);
 addExperience.addEventListener("click", addNewExperience);
