@@ -11,7 +11,7 @@ const host = process.env.HOST || "0.0.0.0";
 
 const defaultProfile = {
   tagline: "专注于产品、技术与持续成长",
-  name: "猫庐文化有限公司",
+  name: "你的姓名",
   headline: "在这里写一句清晰、有力量的个人介绍，例如你的职业方向、擅长领域或正在寻找的机会。",
   city: "中国 · 城市",
   role: "你的职位",

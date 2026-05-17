@@ -1,9 +1,9 @@
-const storageKey = "personal-site-content-v1";
-const photoKey = "personal-site-photo-v1";
+const storageKey = "personal-site-content-v2";
+const photoKey = "personal-site-photo-v2";
 
 const defaultContent = {
   tagline: "专注于产品、技术与持续成长",
-  name: "无锡猫庐文化有限公司",
+  name: "你的姓名",
   headline: "在这里写一句清晰、有力量的个人介绍，例如你的职业方向、擅长领域或正在寻找的机会。",
   city: "中国 · 城市",
   role: "你的职位",
@@ -46,84 +46,54 @@ const experienceTemplate = document.querySelector("#experienceTemplate");
 
 let content = structuredClone(defaultContent);
 let isEditing = false;
-let apiAvailable = false;
 
-function mergeContent(nextContent) {
+function mergeContent(nextContent = {}) {
   return {
     ...structuredClone(defaultContent),
     ...nextContent,
-    experiences: Array.isArray(nextContent?.experiences)
+    experiences: Array.isArray(nextContent.experiences)
       ? nextContent.experiences
       : structuredClone(defaultContent.experiences),
   };
 }
 
 async function loadContent() {
-  try {
-    const response = await fetch("/api/profile", { cache: "no-store" });
+  const publishedContent = await loadPublishedProfile();
 
-    if (!response.ok) {
-      throw new Error("Profile API unavailable");
-    }
-
-    apiAvailable = true;
-    return mergeContent(await response.json());
-  } catch {
-    apiAvailable = false;
+  if (publishedContent) {
+    return publishedContent;
   }
 
-  const staticProfilePaths = ["/data/profile.json", "/profile.json"];
+  const localContent = localStorage.getItem(storageKey);
 
-  for (const profilePath of staticProfilePaths) {
+  if (!localContent) {
+    return structuredClone(defaultContent);
+  }
+
+  try {
+    return mergeContent(JSON.parse(localContent));
+  } catch {
+    return structuredClone(defaultContent);
+  }
+}
+
+async function loadPublishedProfile() {
+  const version = Date.now();
+  const paths = [`./profile.json?v=${version}`, `./data/profile.json?v=${version}`];
+
+  for (const path of paths) {
     try {
-      const response = await fetch(profilePath, { cache: "no-store" });
+      const response = await fetch(path, { cache: "no-store" });
 
       if (response.ok) {
         return mergeContent(await response.json());
       }
     } catch {
-      apiAvailable = false;
+      // Keep trying the next possible static profile location.
     }
   }
 
-  const storedContent = localStorage.getItem(storageKey);
-
-  if (!storedContent) {
-    return structuredClone(defaultContent);
-  }
-
-  try {
-    return mergeContent(JSON.parse(storedContent));
-  } catch {
-    return structuredClone(defaultContent);
-  }
-}
-
-function showStaticSaveNotice() {
-  if (apiAvailable) {
-    return;
-  }
-
-  alert("免费静态模式下，修改只会保存在当前浏览器。要让所有人看到最新内容，请更新 GitHub 里的 profile.json，然后重新部署。");
-}
-
-function exportPublicProfile() {
-  collectContent();
-
-  const fallbackPhoto = localStorage.getItem(photoKey);
-  const publicContent = {
-    ...content,
-    photoUrl: content.photoUrl || fallbackPhoto || "",
-  };
-  const blob = new Blob([`${JSON.stringify(publicContent, null, 2)}\n`], {
-    type: "application/json;charset=utf-8",
-  });
-  const link = document.createElement("a");
-
-  link.href = URL.createObjectURL(blob);
-  link.download = "profile.json";
-  link.click();
-  URL.revokeObjectURL(link.href);
+  return null;
 }
 
 function renderContent() {
@@ -147,10 +117,10 @@ function renderExperiences() {
       field.contentEditable = String(isEditing);
     });
 
-    item.querySelector(".delete-button").addEventListener("click", async () => {
+    item.querySelector(".delete-button").addEventListener("click", () => {
       content.experiences.splice(index, 1);
       renderExperiences();
-      await saveContent();
+      savePreviewContent();
     });
 
     experienceList.append(item);
@@ -158,18 +128,17 @@ function renderExperiences() {
 }
 
 function renderPhoto() {
-  const fallbackPhoto = localStorage.getItem(photoKey);
-  const photo = content.photoUrl || fallbackPhoto;
+  const previewPhoto = localStorage.getItem(photoKey);
+  const photo = content.photoUrl || previewPhoto;
 
   if (photo) {
-    const separator = photo.includes("?") ? "&" : "?";
-    portrait.src = photo.startsWith("data:") ? photo : `${photo}${separator}v=${Date.now()}`;
+    portrait.src = photo;
     portraitFrame.classList.add("has-photo");
-    photoHint.textContent = "当前显示的是最新上传照片";
+    photoHint.textContent = "当前显示的是最新照片";
   } else {
     portrait.removeAttribute("src");
     portraitFrame.classList.remove("has-photo");
-    photoHint.textContent = "上传一张照片后，这里会显示最新照片";
+    photoHint.textContent = "上传一张照片后，这里会显示照片";
   }
 }
 
@@ -191,33 +160,44 @@ function collectContent() {
 
   content.experiences = [...experienceList.querySelectorAll(".experience-item")].map((item) => {
     const experience = {};
+
     item.querySelectorAll("[data-exp-field]").forEach((field) => {
       experience[field.dataset.expField] = field.textContent.trim();
     });
+
     return experience;
   });
 }
 
-async function saveContent() {
+function savePreviewContent() {
   collectContent();
-
-  if (apiAvailable) {
-    const response = await fetch("/api/profile", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(content),
-    });
-
-    if (!response.ok) {
-      throw new Error("保存失败");
-    }
-  } else {
-    localStorage.setItem(storageKey, JSON.stringify(content));
-    showStaticSaveNotice();
-  }
+  localStorage.setItem(storageKey, JSON.stringify(content));
 }
 
-async function addNewExperience() {
+function exportPublicProfile() {
+  collectContent();
+
+  const previewPhoto = localStorage.getItem(photoKey);
+  const publicContent = {
+    ...content,
+    photoUrl: content.photoUrl || previewPhoto || "",
+  };
+  const blob = new Blob([`${JSON.stringify(publicContent, null, 2)}\n`], {
+    type: "application/json;charset=utf-8",
+  });
+  const link = document.createElement("a");
+
+  link.href = URL.createObjectURL(blob);
+  link.download = "profile.json";
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+function showStaticNotice() {
+  alert("已保存到当前浏览器用于预览。要让公网网站更新，请点击“下载发布资料”，把下载的 profile.json 上传到 GitHub 根目录，然后在 Render 重新部署。");
+}
+
+function addNewExperience() {
   collectContent();
   content.experiences.push({
     period: "年份 - 年份",
@@ -226,28 +206,7 @@ async function addNewExperience() {
     description: "在这里补充这段工作经历的主要职责和成果。",
   });
   renderExperiences();
-  await saveContent();
-}
-
-async function savePhoto(dataUrl) {
-  if (apiAvailable) {
-    const response = await fetch("/api/photo", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ dataUrl }),
-    });
-
-    if (!response.ok) {
-      throw new Error("照片保存失败");
-    }
-
-    content = mergeContent(await response.json());
-    localStorage.removeItem(photoKey);
-  } else {
-    localStorage.setItem(photoKey, dataUrl);
-  }
-
-  renderPhoto();
+  savePreviewContent();
 }
 
 function handlePhotoUpload(event) {
@@ -259,25 +218,18 @@ function handlePhotoUpload(event) {
 
   const reader = new FileReader();
 
-  reader.addEventListener("load", async () => {
-    await savePhoto(String(reader.result));
+  reader.addEventListener("load", () => {
+    localStorage.setItem(photoKey, String(reader.result));
+    content.photoUrl = String(reader.result);
+    renderPhoto();
+    savePreviewContent();
   });
 
   reader.readAsDataURL(file);
 }
 
-async function resetContent() {
+function resetContent() {
   content = structuredClone(defaultContent);
-
-  if (apiAvailable) {
-    await fetch("/api/profile", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(content),
-    });
-    await fetch("/api/photo", { method: "DELETE" });
-  }
-
   localStorage.removeItem(storageKey);
   localStorage.removeItem(photoKey);
   renderContent();
@@ -286,9 +238,10 @@ async function resetContent() {
 
 editToggle.addEventListener("click", () => setEditing(!isEditing));
 
-saveButton.addEventListener("click", async () => {
-  await saveContent();
+saveButton.addEventListener("click", () => {
+  savePreviewContent();
   setEditing(false);
+  showStaticNotice();
 });
 
 exportButton.addEventListener("click", exportPublicProfile);

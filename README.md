@@ -18,10 +18,10 @@
 
 ## 更新公开内容
 
-公开文字内容在：
+公开文字内容在仓库根目录：
 
 ```text
-data/profile.json
+profile.json
 ```
 
 公开照片可以放在：
@@ -30,7 +30,7 @@ data/profile.json
 assets/profile-photo.jpg
 ```
 
-然后把 `data/profile.json` 里的 `photoUrl` 改成：
+然后把 `profile.json` 里的 `photoUrl` 改成：
 
 ```json
 "/assets/profile-photo.jpg"
