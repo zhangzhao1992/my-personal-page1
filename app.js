@@ -4,6 +4,7 @@ const defaultContent = {
   headline: "深耕动漫与游戏动画制作15年，以顶尖的CG视听语言，为全球客户打造直击心灵的数字内容。",
   city: "中国 • 无锡",
   role: "项目负责人 / 创始人",
+  founder: "陈宇",
   focus: "动漫动画制作 / 游戏动画定制 / 全流程项目交付",
   years: "15 年+",
   about:

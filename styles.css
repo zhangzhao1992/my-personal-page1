@@ -166,6 +166,28 @@ h3 {
   gap: 12px;
 }
 
+.founder-badge {
+  width: fit-content;
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid rgba(215, 181, 109, 0.36);
+  border-radius: 8px;
+  background: rgba(215, 181, 109, 0.1);
+}
+
+.founder-badge span {
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 850;
+}
+
+.founder-badge strong {
+  color: var(--ink);
+  font-size: clamp(1.45rem, 3vw, 2.2rem);
+  line-height: 1;
+}
+
 .primary-button,
 .secondary-button {
   min-height: 48px;
